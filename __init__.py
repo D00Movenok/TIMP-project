@@ -12,6 +12,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 
+UPLOAD_FOLDER = 'static/avatars'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+DEFAULT_AVATAR = 'default.png'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+TIME_FORMAT = '%Y-%m-%d %H:%M'
+
 import models
 import routes
 
