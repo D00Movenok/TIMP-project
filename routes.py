@@ -36,6 +36,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# возвращает индекс, если надо чето добавить, дергай
 @app.route('/', methods=['GET'])
 def index():
     if current_user.is_authenticated:
@@ -44,6 +45,11 @@ def index():
         return render_template('index.html', key='Fuck you')
 
 
+# логин
+# на GET возвращает страничку с логином
+# на POST кушает login и password
+# соответственно логинит
+# погляди на код, увидь flash и почекай доку про него
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -65,6 +71,7 @@ def login():
     return render_template('login.html')
 
 
+# логаут, тут нечего сказать
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -72,6 +79,11 @@ def logout():
     return redirect(url_for('index'))
 
 
+# регистрация
+# на GET возвращает страницу
+# на POST кушает login, password и password2
+# причем password == password2, иначе не регнет
+# обрати внимание на flash, почитай в доке че это
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -95,6 +107,9 @@ def register():
     return render_template('register.html')
 
 
+# возвращает админку и может обрабатывать какие-то ивенты
+# напишу ивенты и норм возвращение после того как сделаешь
+# темплейт и скажешь че надо туда
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -102,6 +117,9 @@ def admin_login():
     return render_template('admin.html')
 
 
+# делает админом
+# на вход кушает login
+# метод POST
 @app.route('/api/add_admin', methods=['POST'])
 @login_required
 @admin_required
@@ -116,6 +134,11 @@ def add_admin():
         return 'User not found!'
 
 
+# создает команду
+# на вход принимает параметр name и файл
+# файл опциональный, в случае его отсутствия
+# будет установлена стандартная аватарка
+# метод POST
 @app.route('/api/add_team', methods=['POST'])
 @login_required
 @admin_required
@@ -143,6 +166,12 @@ def add_team():
     return 'Ok!'
 
 
+# создает ивент
+# принимает на вход параметры right_team
+# left_team и time
+# лефт и райт это имена команд, которые должны
+# быть предварительно созданы
+# метод POST
 @app.route('/api/add_event', methods=['POST'])
 @login_required
 @admin_required
@@ -183,13 +212,17 @@ def add_event():
     return 'Ok!'
 
 
+# устанавливает деньги определенному юзеру
+# кушает параметр login и amount
+# принимается только от админа
+# метод POST
 @app.route('/api/set_money', methods=['POST'])
 @login_required
 @admin_required
 def set_money():
     login = request.form.get('login')
     amount = request.form.get('amount')
-    
+
     user = User.query.filter_by(login=login).first()
 
     if not user:
