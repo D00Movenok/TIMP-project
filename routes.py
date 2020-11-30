@@ -10,7 +10,7 @@ from flask import (flash, redirect, render_template, request,
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
-from __init__ import (ALLOWED_EXTENSIONS, DEFAULT_AVATAR, TIME_FORMAT, app, db,
+from settings import (ALLOWED_EXTENSIONS, DEFAULT_AVATAR, TIME_FORMAT, app, db,
                       salt)
 from models import Event, Team, User
 
@@ -167,8 +167,8 @@ def add_team():
 
 
 # создает ивент
-# принимает на вход параметры right_team
-# left_team и time
+# принимает на вход параметры t1
+# t2 и time
 # лефт и райт это имена команд, которые должны
 # быть предварительно созданы
 # метод POST
@@ -176,37 +176,27 @@ def add_team():
 @login_required
 @admin_required
 def add_event():
-    right_team = request.form.get('right_team')
-    left_team = request.form.get('left_team')
+    t1_name = request.form.get('t1')
+    t2_name = request.form.get('t2')
     time = request.form.get('time')
 
-    right_team = Team.query.filter_by(name=right_team).first()
-    left_team = Team.query.filter_by(name=left_team).first()
+    t1 = Team.query.filter_by(id=t1_name).first()
+    t2 = Team.query.filter_by(id=t2_name).first()
 
-    if not right_team:
-        return 'Right team don\'t exists!'
-    if not left_team:
-        return 'Left team don\'t exists!'
+    if not t1:
+        return 'Team one don\'t exists!'
+    if not t2:
+        return 'Team two don\'t exists!'
     try:
         time = datetime.datetime.strptime(time, TIME_FORMAT)
     except:
         return 'Time format exception!'
-    
-    new_event = Event(right_team=right_team.id,
-                      left_team=left_team.id,
-                      time=time)
+
+    new_event = Event(time=time)
+    new_event.teams.append(t1)
+    new_event.teams.append(t2)
 
     db.session.add(new_event)
-    db.session.flush()
-
-    _games = literal_eval(right_team.games)
-    _games.append(new_event.id)
-    right_team.games = str(_games)
-
-    _games = literal_eval(left_team.games)
-    _games.append(new_event.id)
-    left_team.games = str(_games)
-
     db.session.commit()
 
     return 'Ok!'
@@ -227,7 +217,7 @@ def set_money():
 
     if not user:
         return 'Wrong username!'
-    
+
     try:
         user.money = int(amount)
     except:
