@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 
 from settings import (ALLOWED_EXTENSIONS, DEFAULT_AVATAR, TIME_FORMAT, app, db,
                       salt)
-from models import Event, Team, User
+from models import Event, Team, User, Bet
 
 
 def admin_required(response):
@@ -180,8 +180,8 @@ def add_event():
     t2_name = request.form.get('t2')
     time = request.form.get('time')
 
-    t1 = Team.query.filter_by(id=t1_name).first()
-    t2 = Team.query.filter_by(id=t2_name).first()
+    t1 = Team.query.filter_by(name=t1_name).first()
+    t2 = Team.query.filter_by(name=t2_name).first()
 
     if not t1:
         return 'Team one don\'t exists!'
@@ -192,9 +192,9 @@ def add_event():
     except:
         return 'Time format exception!'
 
-    new_event = Event(time=time)
-    new_event.teams.append(t1)
-    new_event.teams.append(t2)
+    new_event = Event(time=time,
+                      team_1=t1.id,
+                      team_2=t2.id)
 
     db.session.add(new_event)
     db.session.commit()
@@ -222,6 +222,51 @@ def set_money():
         user.money = int(amount)
     except:
         return 'Bad amount!'
+    db.session.commit()
+
+    return 'Ok!'
+
+
+# устанавливает деньги определенному юзеру
+# кушает параметр event_id, amount и team_1
+# event_id айди евента для ставки
+# amount число ставки
+# team_1 булевая переменная, ставим ли
+# мы на первую команду
+# метод POST
+@app.route('/api/set_bet', methods=['POST'])
+@login_required
+def set_bet():
+    event_id = int(request.form.get('event_id'))
+    amount = int(request.form.get('amount'))
+    team_1 = request.form.get('team_1')
+
+    user = current_user
+    event = Event.query.filter_by(id=event_id).first()
+
+    if team_1:
+        team_1 = True
+    else:
+        team_1 = False
+
+    if not event:
+        return 'Bad event id!'
+    if amount < 1:
+        return 'Fuck you'
+    if amount > user.money:
+        return 'Not enough money :('
+
+    single_bet_test = Bet.query.filter(Bet.user_id == user.id).filter(Bet.event_id == event_id).first()
+    if single_bet_test:
+        return 'You already have a bet!'
+
+    new_bet = Bet(amount=amount,
+                  team_1=team_1,
+                  user_id=user.id,
+                  event_id=event.id)
+    user.money = user.money - amount
+
+    db.session.add(new_bet)
     db.session.commit()
 
     return 'Ok!'

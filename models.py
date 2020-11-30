@@ -3,12 +3,6 @@ from flask_login import UserMixin
 from settings import db, login_manager
 
 
-team_per_event = db.Table('team_per_event',
-    db.Column('team_id', db.Integer, db.ForeignKey('team.id')),
-    db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
-)
-
-
 # юзер создает ставку, ставка добавляется в ивент
 
 class User(db.Model, UserMixin):
@@ -22,15 +16,16 @@ class User(db.Model, UserMixin):
 
 class Bet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    amount_money = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    team_1 = db.Column(db.Boolean, nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    teams = db.relationship('Team', secondary=team_per_event,
-                            backref=db.backref('events', lazy=True))
+    team_1 = db.Column(db.Integer, nullable=False)
+    team_2 = db.Column(db.Integer, nullable=False)
     bets = db.relationship('Bet', backref='event', lazy=True)
     amount_money = db.Column(db.Integer, nullable=False, default=0)
     time = db.Column(db.DateTime, nullable=False)
