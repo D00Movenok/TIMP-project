@@ -1,9 +1,7 @@
 import datetime
 import os
-from ast import literal_eval
 from functools import wraps
 from hashlib import sha256
-from random import randint
 
 from flask import (flash, redirect, render_template, request,
                    send_from_directory, url_for)
@@ -256,7 +254,8 @@ def set_bet():
     if amount > user.money:
         return 'Not enough money :('
 
-    single_bet_test = Bet.query.filter(Bet.user_id == user.id).filter(Bet.event_id == event_id).first()
+    single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
+                               .filter(Bet.event_id == event_id).first()
     if single_bet_test:
         return 'You already have a bet!'
 
@@ -267,6 +266,26 @@ def set_bet():
     user.money = user.money - amount
 
     db.session.add(new_bet)
+    db.session.commit()
+
+    return 'Ok!'
+
+
+# пополнение денег на карту
+# кушает параметр amount
+# прибавляет деньги на карту юзверя
+# метод POST
+@app.route('/api/enter_money', methods=['POST'])
+@login_required
+def enter_money():
+    amount = int(request.form.get('amount'))
+
+    if amount < 1:
+        return 'Fuck you!'
+
+    user = current_user
+    user.money = user.money + amount
+
     db.session.commit()
 
     return 'Ok!'
