@@ -1,18 +1,16 @@
 import datetime
 import os
-from ast import literal_eval
 from functools import wraps
 from hashlib import sha256
-from random import randint
 
 from flask import (flash, redirect, render_template, request,
                    send_from_directory, url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
-from __init__ import (ALLOWED_EXTENSIONS, DEFAULT_AVATAR, TIME_FORMAT, app, db,
+from settings import (ALLOWED_EXTENSIONS, DEFAULT_AVATAR, TIME_FORMAT, app, db,
                       salt)
-from models import Event, Team, User
+from models import Event, Team, User, Bet
 
 
 def admin_required(response):
@@ -167,8 +165,8 @@ def add_team():
 
 
 # создает ивент
-# принимает на вход параметры right_team
-# left_team и time
+# принимает на вход параметры t1
+# t2 и time
 # лефт и райт это имена команд, которые должны
 # быть предварительно созданы
 # метод POST
@@ -176,37 +174,27 @@ def add_team():
 @login_required
 @admin_required
 def add_event():
-    right_team = request.form.get('right_team')
-    left_team = request.form.get('left_team')
+    t1_name = request.form.get('t1')
+    t2_name = request.form.get('t2')
     time = request.form.get('time')
 
-    right_team = Team.query.filter_by(name=right_team).first()
-    left_team = Team.query.filter_by(name=left_team).first()
+    t1 = Team.query.filter_by(name=t1_name).first()
+    t2 = Team.query.filter_by(name=t2_name).first()
 
-    if not right_team:
-        return 'Right team don\'t exists!'
-    if not left_team:
-        return 'Left team don\'t exists!'
+    if not t1:
+        return 'Team one don\'t exists!'
+    if not t2:
+        return 'Team two don\'t exists!'
     try:
         time = datetime.datetime.strptime(time, TIME_FORMAT)
     except:
         return 'Time format exception!'
-    
-    new_event = Event(right_team=right_team.id,
-                      left_team=left_team.id,
-                      time=time)
+
+    new_event = Event(time=time,
+                      team_1=t1.id,
+                      team_2=t2.id)
 
     db.session.add(new_event)
-    db.session.flush()
-
-    _games = literal_eval(right_team.games)
-    _games.append(new_event.id)
-    right_team.games = str(_games)
-
-    _games = literal_eval(left_team.games)
-    _games.append(new_event.id)
-    left_team.games = str(_games)
-
     db.session.commit()
 
     return 'Ok!'
@@ -227,11 +215,77 @@ def set_money():
 
     if not user:
         return 'Wrong username!'
-    
+
     try:
         user.money = int(amount)
     except:
         return 'Bad amount!'
+    db.session.commit()
+
+    return 'Ok!'
+
+
+# устанавливает деньги определенному юзеру
+# кушает параметр event_id, amount и team_1
+# event_id айди евента для ставки
+# amount число ставки
+# team_1 булевая переменная, ставим ли
+# мы на первую команду
+# метод POST
+@app.route('/api/set_bet', methods=['POST'])
+@login_required
+def set_bet():
+    event_id = int(request.form.get('event_id'))
+    amount = int(request.form.get('amount'))
+    team_1 = request.form.get('team_1')
+
+    user = current_user
+    event = Event.query.filter_by(id=event_id).first()
+
+    if team_1:
+        team_1 = True
+    else:
+        team_1 = False
+
+    if not event:
+        return 'Bad event id!'
+    if amount < 1:
+        return 'Fuck you'
+    if amount > user.money:
+        return 'Not enough money :('
+
+    single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
+                               .filter(Bet.event_id == event_id).first()
+    if single_bet_test:
+        return 'You already have a bet!'
+
+    new_bet = Bet(amount=amount,
+                  team_1=team_1,
+                  user_id=user.id,
+                  event_id=event.id)
+    user.money = user.money - amount
+
+    db.session.add(new_bet)
+    db.session.commit()
+
+    return 'Ok!'
+
+
+# пополнение денег на карту
+# кушает параметр amount
+# прибавляет деньги на карту юзверя
+# метод POST
+@app.route('/api/enter_money', methods=['POST'])
+@login_required
+def enter_money():
+    amount = int(request.form.get('amount'))
+
+    if amount < 1:
+        return 'Fuck you!'
+
+    user = current_user
+    user.money = user.money + amount
+
     db.session.commit()
 
     return 'Ok!'
