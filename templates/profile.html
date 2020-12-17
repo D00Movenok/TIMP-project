@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Profile 1337BET
+{% endblock %}
+
+
+{% block body %}
+<link rel="stylesheet" href="../static/profile.css" type="text/css">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-6 profile-data">
+      <div class="card">
+      <img src="../static/avatars/default.png" class="card-img-top profile-image" alt="...">
+      <div class="card-body">
+        <h1 class="card-title">{% block profile_name %}NAME{% endblock %}</h1>
+
+      </div>
+      <ul class="list-group list-group-flush profile-table">
+        <li class="list-group-item"><p class="profile_status">{% block status %}STATUS{% endblock %}</p></li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Vestibulum at eros</li>
+      </ul>
+      <div class="card-body">
+        <button type="button" class="btn btn-primary profile-button">Deposit</button>
+        <button type="button" class="btn btn-outline-primary profile-button">Withdraw</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6 data-block">
+    <h2>Full Name</h2>
+    {% block fullname %}JOHN SMITH{% endblock %}
+    <hr class="profile-hr">
+    <h2>Email</h2>
+    <p class="data">{% block email %}john_smith@1337.com{% endblock %}</p>
+    <hr class="profile-hr">
+    <h2>Mobile</h2>
+  <p class="data">{% block mobile %}888-888-88-88{% endblock %}</p>
+    <hr class="profile-hr">
+    <h2>Address</h2>
+    {% block address %}SPB, LOMONOSOVA 9{% endblock %}
+  </div>
+  </div>
+
+</div>
+
+
+{% endblock %}

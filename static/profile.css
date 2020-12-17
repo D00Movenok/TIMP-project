@@ -1,0 +1,38 @@
+.profile-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+.profile-hr {
+  border-top: 2px solid gray;
+  margin-left: 0;
+  width: 60%;
+}
+.profile-data {
+  padding: 50px;
+  text-align: center;
+}
+.data-block {
+  padding-top: 3.5rem;
+}
+.data {
+
+}
+.profile-table {
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+}
+.profile-button {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20%;
+  margin-right: 10px;
+}
+a {
+  text-decoration: none;
+}
