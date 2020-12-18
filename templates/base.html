@@ -14,14 +14,18 @@
 <body>
 
     <ul id="navbar">
-        <li id="list"><a id="nv" class="active" href="#">1337BET</a></li>
+        <li id="list"><a id="nv" class="active" href="{{ url_for('index') }}">1337BET</a></li>
         <li id="list"><a href="#">Bets</a></li>
         <li id="list"><a href="#">Teams</a></li>
         <li id="list"><a href="#">Results</a></li>
         <li id="list"><a href="#">Contact</a></li>
         <li id="list"><a href="#">About</a></li>
-        <li id="list" style="float:right"><a href="#">Register</a></li>
-        <li id="list" style="float:right"><a id="nv" class="active" href="#">Login</a></li>
+        {% if current_user.is_authenticated %}
+            <li id="list" style="float:right"><a id="nv" class="active" href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+            <li id="list" style="float:right"><a href="{{ url_for('register') }}">Register</a></li>
+            <li id="list" style="float:right"><a id="nv" class="active" href="{{ url_for('login') }}">Login</a></li>
+        {% endif %}
     </ul>
 
     {% block body %}{% endblock %}

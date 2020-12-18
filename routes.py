@@ -115,6 +115,24 @@ def admin_login():
     return render_template('admin.html')
 
 
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    return render_template('profile.html')
+
+
+@app.route('/withdraw', methods=['GET', 'POST'])
+@login_required
+def withdraw():
+    return render_template('withdraw.html')
+
+
+@app.route('/deposit', methods=['GET', 'POST'])
+@login_required
+def deposit():
+    return render_template('deposit.html')
+
+
 # делает админом
 # на вход кушает login
 # метод POST
