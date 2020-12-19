@@ -120,6 +120,9 @@ def admin_login():
 def profile():
     return render_template('profile.html')
 
+@app.route('/about', methods=['GET', 'POST'])
+def about():
+    return render_template('about.html')
 
 @app.route('/withdraw', methods=['GET', 'POST'])
 @login_required
