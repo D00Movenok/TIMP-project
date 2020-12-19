@@ -2,6 +2,7 @@ import datetime
 import os
 from functools import wraps
 from hashlib import sha256
+from random import randint
 
 from flask import (flash, redirect, render_template, request,
                    send_from_directory, url_for)
@@ -32,6 +33,41 @@ def redirect_to_signin(response):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def bet_iter(bets, coef):
+    for bet in bets:
+        bet.ended = True
+        user = User.filter_by(id=bet.user_id).first()
+        user.money = user.money + bet.amount * coef
+
+
+# проверяет ивенты на их прошедшесть
+# выставляет победителя (рандомно) и раздает деньги
+def update_database():
+    now = datetime.now()
+    done = Events.query.filter(ended == False and ended >= now).all()
+    if done:
+        
+        for thing in done:
+            thing.ended = True
+            thing.winner = bool(randint(0,1))
+            bets = ets.filter_by(id=thing.bets).all()
+            if len(bets) > 1:
+                if thing.winner == False:
+                    coef = floor(thing.amount2 / thing.amount1) + 1
+                    bets = Bets.filter_by(id=thing.bets).filter_by(team_1=True).all()
+                    bet_iter(bets, coef)
+                else:
+                    coef = floor(thing.amount1 / thing.amount2) + 1
+                    bets = Bets.filter_by(id=thing.bets).filter_by(team_1=False).all()
+                    bet_iter(bets, coef)
+            else:
+                bet_iter(bets, 1)
+
+        db.session.commit()
+        return 'Updated!'
+    return 'Nothing to update('
 
 
 # возвращает индекс, если надо чето добавить, дергай
@@ -274,6 +310,8 @@ def set_bet():
         return 'Fuck you'
     if amount > user.money:
         return 'Not enough money :('
+    if event.ended == true:
+        return 'Go away, cheater'
 
     single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
                                .filter(Bet.event_id == event_id).first()
@@ -284,6 +322,11 @@ def set_bet():
                   team_1=team_1,
                   user_id=user.id,
                   event_id=event.id)
+    if team_1
+        event.amount1 = event.amount1 + amount
+    else:
+        event.amount2 = event.amount2 + amount
+
     user.money = user.money - amount
 
     db.session.add(new_bet)

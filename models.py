@@ -20,6 +20,7 @@ class Bet(db.Model):
     team_1 = db.Column(db.Boolean, nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    ended = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class Event(db.Model):
@@ -27,8 +28,11 @@ class Event(db.Model):
     team_1 = db.Column(db.Integer, nullable=False)
     team_2 = db.Column(db.Integer, nullable=False)
     bets = db.relationship('Bet', backref='event', lazy=True)
-    # amount_money = db.Column(db.Integer, nullable=False, default=0)
+    amount1 = db.Column(db.Integer, nullable=False, default=0)
+    amount2 = db.Column(db.Integer, nullable=False, default=0)
     time = db.Column(db.DateTime, nullable=False)
+    ended = db.Column(db.Boolean, nullable=False)
+    winner = db.Column(db.Boolean, nullable=False)
 
 
 class Team(db.Model):
