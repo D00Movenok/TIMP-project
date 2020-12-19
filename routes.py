@@ -322,7 +322,7 @@ def set_bet():
                   team_1=team_1,
                   user_id=user.id,
                   event_id=event.id)
-    if team_1
+    if team_1:
         event.amount1 = event.amount1 + amount
     else:
         event.amount2 = event.amount2 + amount
