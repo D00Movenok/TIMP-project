@@ -171,6 +171,11 @@ def withdraw():
 def deposit():
     return render_template('deposit.html')
 
+@app.route('/bets', methods=['GET', 'POST'])
+# @login_required
+def bets():
+    return render_template('bets.html', table_list = [1,2,3,4,5], my_string = 'Championship', team_list=[1,2,3,4,5], coef_list = [2.5,4.2])
+
 
 # делает админом
 # на вход кушает login

@@ -5,81 +5,33 @@ Bets 1337BET
 {% endblock %}
 
 {% block body %}
-<!-- <link href="../static/bets.css" rel="stylesheet" type="text/css"> -->
+<link href="../static/bets.css" rel="stylesheet" type="text/css">
 <div class="container" style="width: 60%;">
     <h2>Events</h2>
+    {% for n in table_list %}
     <hr>
     <table class="table table-dark">
         <thead>
             <tr>
-                <th style="width: 70%; background: rgb(161, 161, 161);">{% block eventname1 %}Football World Cup
-                    2020{%endblock%}</th>
-                <th style="width: 100%; background: rgb(161, 161, 161);"></th>
-            </tr>
-        </thead>
-        <tbody style="background: rgb(255, 255, 255); ">
-            <tr>
-                <td>{% block teamname1 %}Outlaws{% endblock %} VS {% block teamname11 %}LA Knights{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
-            <tr>
-                <td>{% block teamname2 %}Arsenal{% endblock %} VS {% block teamname21 %}The Fighters{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
-            <tr>
-                <td>{% block teamname3 %}Nonames{% endblock %} VS {% block teamname31 %}Suckers{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
-        </tbody>
-    </table>
-    <hr>
-    <table class="table table-dark">
-        <thead>
-            <tr>
-                <th style="width: 70%; background: rgb(161, 161, 161);">{%block eventname2%}Canada Academic
-                    Championship{%endblock%}</th>
-                <th style="width: 100%; background: rgb(161, 161, 161);"></th>
+                <th style="width: 50%; background: rgb(161, 161, 161);">{{my_string}} {{n}}</th>
+                <th style="width: 70%; background: rgb(161, 161, 161);"></th>
             </tr>
         </thead>
         <tbody style="background: rgb(255, 255, 255);">
+            {% for n in team_list %}
             <tr>
-                <td>{% block teamname12 %}Icewing{% endblock %} VS {% block teamname13 %}Bears{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
+                <td>Team {{n}} VS Team {{n}}</td>
+                <td style = "text-align: right;">
+                    <input style="width:25%;" type="number" value=1>
+                    {% for n in coef_list %}
+                    <a id="betln" href="#openModal">Bet coeff: {{n}}</a>
+                    {% endfor %}
+                </td>
             </tr>
-            <tr>
-                <td>{% block teamname22 %}Foxen{% endblock %} VS {% block teamname23 %}Murderers{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
-            <tr>
-                <td>{% block teamname32 %}Nonames{% endblock %} VS {% block teamname33 %}Suckers{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
-    <hr>
-    <table class="table table-dark">
-        <thead>
-            <tr>
-                <th style="width: 70%; background: rgb(161, 161, 161);">{%block eventname3%}Wimbledon
-                    championship{%endblock%}</th>
-                <th style="width: 100%; background: rgb(161, 161, 161);"></th>
-            </tr>
-        </thead>
-        <tbody style="background: rgb(255, 255, 255);">
-            <tr>
-                <td>{% block name1 %}Angel White{% endblock %} VS {% block name11 %}Roey Smith{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
-            <tr>
-                <td>{% block name2 %}Vergil{% endblock %} VS {% block name22 %}Dante{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
-            <tr>
-                <td>{% block name3 %}Amelia Whatson{% endblock %} VS {% block name33 %}Aoi Kitamura{% endblock %}</td>
-                <td><a id="betln" href="#">Bet coeff: 2.5</a> <a id="betln" href="#">Bet coeff: 4</a></td>
-            </tr>
-        </tbody>
-    </table>
+    {% endfor %}
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li class="page-item"><a class="page-link" href="#">Previous</a></li>
@@ -90,4 +42,11 @@ Bets 1337BET
         </ul>
     </nav>
 </div>
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h1>Your bet is placed</h1>
+    </div>
+</div>
+
 {% endblock %}
