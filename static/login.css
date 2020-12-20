@@ -28,3 +28,13 @@ h2 {
 #signinSubmit {
   background-color: #0795fa;
 }
+
+.form-group {
+  width: 50%;
+}
+
+#cont {
+  margin-left: 35%;
+  margin-top: 20%;
+  margin-bottom: 20%;
+}

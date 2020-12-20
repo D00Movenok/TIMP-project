@@ -196,3 +196,23 @@ footer .copyright {
 footer .copyright span {
   color: #0795fa;
 }
+
+#betln {
+  display: inline;
+  background-color: #969294;
+  border-radius: 5px;
+	padding: 5px 10px;
+	color: #FFFFFF;
+	-webkit-box-decoration-break: clone;
+  box-decoration-break: clone;   
+}
+
+#betln:hover {
+  display: inline;
+  background-color: #0795fa;
+  border-radius: 5px;
+	padding: 5px 10px;
+	color: #FFFFFF;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;  
+}
