@@ -20,6 +20,7 @@
 					<form method="POST" action="#" role="form">
 						<div class="form-group">
 							<h2>Admin control panel</h2>
+							<input type="hidden" type="text" name="id" value="1">
 						</div>
 						<div class="form-group">
 							<button id="adminSubmit" type="submit" class="btn btn-info btn-block">Event check in</button>
@@ -37,30 +38,29 @@
 					<form method="POST" action="#" role="form">
 						<div class="form-group">
 							<h3>Add event</h3>
+							<input type="hidden" type="text" name="id" value="2">
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="eventid">{% block eventid %}Event id{% endblock %}</label>
-							<input id="eventid" maxlength="25" class="form-control" placeholder="" length="40">
-						</div>
-						<div class="form-group">
-							<p><select size="3" multiple name="hero[]">
-							 <option disabled>Choose team1 id</option>
-							 {% for n in team_list %}
-							 	<option value="team">Team1 id: {{n}}</option>
-							 {% endfor %}
+							<p><label class="control-label" for="eventid">Team 1:</label><br>
+								<select size="1" name="t1" required>
+								<option disabled>Choose team 1</option>
+								{% for n in team_list %}
+									<option value="{{n[0]}}">{{n[0]}}</option>
+								{% endfor %}
 							</select></p>
 						</div>
 						<div class="form-group">
-							<p><select size="3" multiple name="hero[]">
-								<option disabled>Choose team2 id</option>
+							<p><label class="control-label" for="eventid">Team 2:</label><br>
+								<select size="1" name="t2" required>
+								<option disabled>Choose team 2</option>
 								{% for n in team_list %}
-									<option value="team">Team2 id: {{n}}</option>
+									<option value="{{n[0]}}">{{n[0]}}</option>
 								{% endfor %}
 							   </select></p>
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="eventid">{% block time %}time{% endblock %}</label>
-							<input id="eventtime" type="datetime-local">
+							<label class="control-label" for="eventid">Time:</label><br>
+							<input id="eventtime" name="time" type="datetime-local" required>
 						</div>
 						<div class="form-group">
 							<button id="eventSubmit" type="submit" class="btn btn-info btn-block">Add event</button>
@@ -78,10 +78,14 @@
 					<form method="POST" action="#" role="form">
 						<div class="form-group">
 							<h3>User-to-admin control</h3>
+							<input type="hidden" type="text" name="id" value="3">
 						</div>
-						{% for user_name in user_list %}
-								<input type="checkbox" name="option" value="un">{{user_name}}<Br>
-						{% endfor %}
+							<select size="1" name="login" required>
+							<option disabled>Select user</option>
+							{% for user_name in user_list %}
+								<option value="{{user_name[0]}}">{{user_name[0]}}</option>
+							{% endfor %}
+						   </select></p>
 						<div class="form-group">
 							<button id="makeAmdSubmit" type="submit" class="btn btn-info btn-block">Make admin</button>
 						</div>
@@ -98,18 +102,15 @@
 					<form method="POST" action="#" role="form">
 						<div class="form-group">
 							<h3>Add team</h3>
+							<input type="hidden" type="text" name="id" value="4">
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="eventid">{% block teamid %}Team id{% endblock %}</label>
-							<input id="teamid" maxlength="25" class="form-control" placeholder="" length="40">
+							<label class="control-label" for="eventid">Team name</label>
+							<input id="teamname" class="form-control" name="name" placeholder="" required>
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="eventid">{% block teamname %}Team name{% endblock %}</label>
-							<input id="teamname" maxlength="25" class="form-control" placeholder="" length="40">
-						</div>
-						<div class="form-group">
-							<label class="control-label" for="eventid">{% block teamavatar %}Avatar url{% endblock %}</label>
-							<input id="teamavatar" maxlength="25" class="form-control" placeholder="" length="40">
+							<label class="control-label" for="eventid">Avatar:</label>
+							<input id="teamavatar" type="file" class="form-control" name="file" required>
 						</div>
 						<div class="form-group">
 							<button id="teamSubmit" type="submit" class="btn btn-info btn-block">Add team</button>

@@ -145,7 +145,12 @@ def register():
 @login_required
 @admin_required
 def admin_login():
-    return render_template('admin.html')
+    if request.method == 'GET':
+        teams = Team.query.with_entities(Team.name).all()
+        users = User.query.with_entities(User.login).all()
+        return render_template('admin.html', team_list = teams, user_list = users)
+    else:
+        pass
 
 
 @app.route('/profile', methods=['GET'])
