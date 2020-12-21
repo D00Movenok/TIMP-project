@@ -18,7 +18,7 @@ DEFAULT_AVATAR = 'default.png'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-TIME_FORMAT = '%Y-%m-%d %H:%M'
+TIME_FORMAT = '%Y-%m-%dT%H:%M'
 
 import models
 import routes

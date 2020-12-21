@@ -147,10 +147,76 @@ def register():
 def admin_login():
     if request.method == 'GET':
         teams = Team.query.with_entities(Team.name).all()
-        users = User.query.with_entities(User.login).all()
+        users = User.query.with_entities(User.login).filter_by(is_admin=False).all()
         return render_template('admin.html', team_list = teams, user_list = users)
     else:
-        pass
+        id = int(request.form.get('id'))
+        if not id:
+            return 'wtf'
+        elif id == 1:
+            pass
+        elif id == 2:
+            t1_name = request.form.get('t1')
+            t2_name = request.form.get('t2')
+            time = request.form.get('time')
+
+            t1 = Team.query.filter_by(name=t1_name).first()
+            t2 = Team.query.filter_by(name=t2_name).first()
+
+            if not t1:
+                flash('Team ' + t1_name + ' don\'t exists!')
+            elif not t2:
+                flash('Team ' + t2_name + ' don\'t exists!')
+            elif t1 == t2:
+                flash('Teamnames must not be equal!')
+            else:
+                try:
+                    time = datetime.datetime.strptime(time, TIME_FORMAT)
+                    new_event = Event(time=time,
+                                team_1=t1.id,
+                                team_2=t2.id)
+
+                    db.session.add(new_event)
+                    db.session.commit()
+
+                    flash('Event created')
+                except:
+                    flash('Time format exception!')
+        elif id == 3:
+            login = request.form.get('login')
+            user = User.query.filter_by(login=login).first()
+            if user:
+                user.is_admin = True
+                db.session.commit()
+                flash('User ' + login + ' added to admins')
+            else:
+                flash('User ' + login + ' not found!')
+        else:
+            name = request.form.get('name')
+            if Team.query.filter_by(name=name).first():
+                flash('Teamname is busy!')
+            else:
+                if 'file' not in request.files:
+                    avatar_uri = DEFAULT_AVATAR
+                else:
+                    file = request.files['file']
+                    if file and allowed_file(file.filename) and file.filename != '':
+                        filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        avatar_uri = filename
+                    else:
+                        avatar_uri = DEFAULT_AVATAR
+
+                new_team = Team(name=name,
+                                avatar_uri=avatar_uri)
+                db.session.add(new_team)
+                db.session.commit()
+
+                flash('Team ' + name + ' created!')
+
+        teams = Team.query.with_entities(Team.name).all()
+        users = User.query.with_entities(User.login).all()
+        return render_template('admin.html', team_list = teams, user_list = users)
 
 
 @app.route('/profile', methods=['GET'])
@@ -227,18 +293,18 @@ def bets():
 # делает админом
 # на вход кушает login
 # метод POST
-@app.route('/api/add_admin', methods=['POST'])
-@login_required
-@admin_required
-def add_admin():
-    login = request.form.get('login')
-    user = User.query.filter_by(login=login).first()
-    if user:
-        user.is_admin = True
-        db.session.commit()
-        return 'Ok!'
-    else:
-        return 'User not found!'
+# @app.route('/api/add_admin', methods=['POST'])
+# @login_required
+# @admin_required
+# def add_admin():
+#     login = request.form.get('login')
+#     user = User.query.filter_by(login=login).first()
+#     if user:
+#         user.is_admin = True
+#         db.session.commit()
+#         return 'Ok!'
+#     else:
+#         return 'User not found!'
 
 
 # создает команду
@@ -246,31 +312,31 @@ def add_admin():
 # файл опциональный, в случае его отсутствия
 # будет установлена стандартная аватарка
 # метод POST
-@app.route('/api/add_team', methods=['POST'])
-@login_required
-@admin_required
-def add_team():
-    name = request.form.get('name')
-    if Team.query.filter_by(name=name).first():
-        return 'Teamname is busy!'
+# @app.route('/api/add_team', methods=['POST'])
+# @login_required
+# @admin_required
+# def add_team():
+#     name = request.form.get('name')
+#     if Team.query.filter_by(name=name).first():
+#         return 'Teamname is busy!'
 
-    if 'file' not in request.files:
-        avatar_uri = DEFAULT_AVATAR
-    else:
-        file = request.files['file']
-        if file and allowed_file(file.filename) and file.filename != '':
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            avatar_uri = filename
-        else:
-            avatar_uri = DEFAULT_AVATAR
+#     if 'file' not in request.files:
+#         avatar_uri = DEFAULT_AVATAR
+#     else:
+#         file = request.files['file']
+#         if file and allowed_file(file.filename) and file.filename != '':
+#             filename = secure_filename(file.filename)
+#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#             avatar_uri = filename
+#         else:
+#             avatar_uri = DEFAULT_AVATAR
 
-    new_team = Team(name=name,
-                    avatar_uri=avatar_uri)
-    db.session.add(new_team)
-    db.session.commit()
+#     new_team = Team(name=name,
+#                     avatar_uri=avatar_uri)
+#     db.session.add(new_team)
+#     db.session.commit()
 
-    return 'Ok!'
+#     return 'Ok!'
 
 
 # создает ивент
@@ -279,34 +345,34 @@ def add_team():
 # лефт и райт это имена команд, которые должны
 # быть предварительно созданы
 # метод POST
-@app.route('/api/add_event', methods=['POST'])
-@login_required
-@admin_required
-def add_event():
-    t1_name = request.form.get('t1')
-    t2_name = request.form.get('t2')
-    time = request.form.get('time')
+# @app.route('/api/add_event', methods=['POST'])
+# @login_required
+# @admin_required
+# def add_event():
+#     t1_name = request.form.get('t1')
+#     t2_name = request.form.get('t2')
+#     time = request.form.get('time')
 
-    t1 = Team.query.filter_by(name=t1_name).first()
-    t2 = Team.query.filter_by(name=t2_name).first()
+#     t1 = Team.query.filter_by(name=t1_name).first()
+#     t2 = Team.query.filter_by(name=t2_name).first()
 
-    if not t1:
-        return 'Team one don\'t exists!'
-    if not t2:
-        return 'Team two don\'t exists!'
-    try:
-        time = datetime.datetime.strptime(time, TIME_FORMAT)
-    except:
-        return 'Time format exception!'
+#     if not t1:
+#         return 'Team one don\'t exists!'
+#     if not t2:
+#         return 'Team two don\'t exists!'
+#     try:
+#         time = datetime.datetime.strptime(time, TIME_FORMAT)
+#     except:
+#         return 'Time format exception!'
 
-    new_event = Event(time=time,
-                      team_1=t1.id,
-                      team_2=t2.id)
+#     new_event = Event(time=time,
+#                       team_1=t1.id,
+#                       team_2=t2.id)
 
-    db.session.add(new_event)
-    db.session.commit()
+#     db.session.add(new_event)
+#     db.session.commit()
 
-    return 'Ok!'
+#     return 'Ok!'
 
 
 # устанавливает деньги определенному юзеру

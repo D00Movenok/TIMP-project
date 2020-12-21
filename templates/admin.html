@@ -32,6 +32,15 @@
 	</div>
 	<hr>
 	<div class="container">
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			<div class="alert alert-danger">
+			{% for message in messages %}
+				{{ message }}
+			{% endfor %}
+			</div>
+		{% endif %}
+		{% endwith %}
 		<div class="row">
 			<div class="panel panel-primary">
 				<div class="panel-body">
@@ -110,7 +119,7 @@
 						</div>
 						<div class="form-group">
 							<label class="control-label" for="eventid">Avatar:</label>
-							<input id="teamavatar" type="file" class="form-control" name="file" required>
+							<input id="teamavatar" type="file" class="form-control" name="file">
 						</div>
 						<div class="form-group">
 							<button id="teamSubmit" type="submit" class="btn btn-info btn-block">Add team</button>
