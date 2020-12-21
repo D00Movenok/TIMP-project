@@ -74,9 +74,9 @@ def update_database():
 @app.route('/', methods=['GET'])
 def index():
     if current_user.is_authenticated:
-        return render_template('index.html', key='You are authenticated')
+        return render_template('index.html')
     else:
-        return render_template('index.html', key='Fuck you')
+        return render_template('index.html')
 
 
 # логин
@@ -156,22 +156,22 @@ def admin_login():
 def profile():
     return render_template('profile.html')
 
-@app.route('/about', methods=['GET', 'POST'])
+@app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
 
-@app.route('/withdraw', methods=['GET', 'POST'])
+@app.route('/withdraw', methods=['GET'])
 @login_required
 def withdraw():
     return render_template('withdraw.html')
 
 
-@app.route('/deposit', methods=['GET', 'POST'])
+@app.route('/deposit', methods=['GET'])
 @login_required
 def deposit():
     return render_template('deposit.html')
 
-@app.route('/bets', methods=['GET', 'POST'])
+@app.route('/bets', methods=['GET'])
 # @login_required
 def bets():
     return render_template('bets.html', table_list = [1,2,3,4,5], my_string = 'Championship', team_list=[1,2,3,4,5], coef_list = [2.5,4.2])

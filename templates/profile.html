@@ -22,8 +22,8 @@ Profile 1337BET
         <li class="list-group-item">Vestibulum at eros</li>
       </ul>
       <div class="card-body">
-        <button type="button" class="btn btn-primary profile-button">Deposit</button>
-        <button type="button" class="btn btn-outline-primary profile-button">Withdraw</button>
+        <a href="{{ url_for('deposit') }}"><button type="button" class="btn btn-primary profile-button">Deposit</button></a>
+        <a href="{{ url_for('withdraw') }}"><button type="button" class="btn btn-outline-primary profile-button">Withdraw</button></a>
       </div>
     </div>
   </div>
