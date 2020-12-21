@@ -42,34 +42,6 @@ def bet_iter(bets, coef):
         user.money = user.money + bet.amount * coef
 
 
-# проверяет ивенты на их прошедшесть
-# выставляет победителя (рандомно) и раздает деньги
-def update_database():
-    now = datetime.now()
-    done = Events.query.filter(ended == False and ended >= now).all()
-    if done:
-
-        for thing in done:
-            thing.ended = True
-            thing.winner = bool(randint(0,1))
-            bets = ets.filter_by(id=thing.bets).all()
-            if len(bets) > 1:
-                if thing.winner == False:
-                    coef = floor(thing.amount2 / thing.amount1) + 1
-                    bets = Bets.filter_by(id=thing.bets).filter_by(team_1=True).all()
-                    bet_iter(bets, coef)
-                else:
-                    coef = floor(thing.amount1 / thing.amount2) + 1
-                    bets = Bets.filter_by(id=thing.bets).filter_by(team_1=False).all()
-                    bet_iter(bets, coef)
-            else:
-                bet_iter(bets, 1)
-
-        db.session.commit()
-        return 'Updated!'
-    return 'Nothing to update('
-
-
 # возвращает индекс, если надо чето добавить, дергай
 @app.route('/', methods=['GET'])
 def index():
@@ -145,17 +117,44 @@ def register():
 @login_required
 @admin_required
 def admin_login():
-    if request.method == 'GET':
-        teams = Team.query.with_entities(Team.name).all()
-        users = User.query.with_entities(User.login).filter_by(is_admin=False).all()
-        return render_template('admin.html', team_list = teams, user_list = users)
-    else:
+    if request.method == 'POST':
         id = int(request.form.get('id'))
         if not id:
             return 'wtf'
         elif id == 1:
-            pass
+            # проверяет ивенты на их прошедшесть
+            # выставляет победителя (рандомно) и раздает деньги
+            now = datetime.datetime.now()
+            done = Event.query.filter(Event.ended == False and Event.time >= now).all()
+            if done:
+                for thing in done:
+                    thing.ended = True
+                    thing.winner = bool(randint(0,1))
+                    if thing.bets:
+                        bets = Bet.query.filter_by(id=thing.bets).all()
+                        if len(bets) > 1:
+                            if thing.winner == False:
+                                coef = floor(thing.amount2 / thing.amount1) + 1
+                                bets = Bet.query.filter_by(id=thing.bets).filter_by(team_1=True).all()
+                                bet_iter(bets, coef)
+                            else:
+                                coef = floor(thing.amount1 / thing.amount2) + 1
+                                bets = Bet.query.filter_by(id=thing.bets).filter_by(team_1=False).all()
+                                bet_iter(bets, coef)
+                        else:
+                            bet_iter(bets, 1)
+
+                db.session.commit()
+                flash('Updated!')
+            else:
+                flash('Nothing to update(')
         elif id == 2:
+            # создает ивент
+            # принимает на вход параметры t1
+            # t2 и time
+            # лефт и райт это имена команд, которые должны
+            # быть предварительно созданы
+            # метод POST
             t1_name = request.form.get('t1')
             t2_name = request.form.get('t2')
             time = request.form.get('time')
@@ -173,8 +172,8 @@ def admin_login():
                 try:
                     time = datetime.datetime.strptime(time, TIME_FORMAT)
                     new_event = Event(time=time,
-                                team_1=t1.id,
-                                team_2=t2.id)
+                                      team_1=t1.id,
+                                      team_2=t2.id)
 
                     db.session.add(new_event)
                     db.session.commit()
@@ -183,6 +182,9 @@ def admin_login():
                 except:
                     flash('Time format exception!')
         elif id == 3:
+            # делает админом
+            # на вход кушает login
+            # метод POST
             login = request.form.get('login')
             user = User.query.filter_by(login=login).first()
             if user:
@@ -192,6 +194,11 @@ def admin_login():
             else:
                 flash('User ' + login + ' not found!')
         else:
+            # создает команду
+            # на вход принимает параметр name и файл
+            # файл опциональный, в случае его отсутствия
+            # будет установлена стандартная аватарка
+            # метод POST
             name = request.form.get('name')
             if Team.query.filter_by(name=name).first():
                 flash('Teamname is busy!')
@@ -212,17 +219,18 @@ def admin_login():
                 db.session.add(new_team)
                 db.session.commit()
 
-                flash('Team ' + name + ' created!')
+                flash('Team ' + name + ' has created!')
 
-        teams = Team.query.with_entities(Team.name).all()
-        users = User.query.with_entities(User.login).all()
-        return render_template('admin.html', team_list = teams, user_list = users)
+    teams = Team.query.with_entities(Team.name).all()
+    users = User.query.with_entities(User.login).filter_by(is_admin=False).all()
+    return render_template('admin.html', team_list = teams, user_list = users)
 
 
 @app.route('/profile', methods=['GET'])
 @login_required
 def profile():
     return render_template('profile.html', amount = current_user.money)
+
 
 @app.route('/about', methods=['GET'])
 def about():
@@ -288,91 +296,6 @@ def deposit():
 # @login_required
 def bets():
     return render_template('bets.html', table_list = [1,2,3,4,5], my_string = 'Championship', team_list=[1,2,3,4,5], coef_list = [2.5,4.2])
-
-
-# делает админом
-# на вход кушает login
-# метод POST
-# @app.route('/api/add_admin', methods=['POST'])
-# @login_required
-# @admin_required
-# def add_admin():
-#     login = request.form.get('login')
-#     user = User.query.filter_by(login=login).first()
-#     if user:
-#         user.is_admin = True
-#         db.session.commit()
-#         return 'Ok!'
-#     else:
-#         return 'User not found!'
-
-
-# создает команду
-# на вход принимает параметр name и файл
-# файл опциональный, в случае его отсутствия
-# будет установлена стандартная аватарка
-# метод POST
-# @app.route('/api/add_team', methods=['POST'])
-# @login_required
-# @admin_required
-# def add_team():
-#     name = request.form.get('name')
-#     if Team.query.filter_by(name=name).first():
-#         return 'Teamname is busy!'
-
-#     if 'file' not in request.files:
-#         avatar_uri = DEFAULT_AVATAR
-#     else:
-#         file = request.files['file']
-#         if file and allowed_file(file.filename) and file.filename != '':
-#             filename = secure_filename(file.filename)
-#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#             avatar_uri = filename
-#         else:
-#             avatar_uri = DEFAULT_AVATAR
-
-#     new_team = Team(name=name,
-#                     avatar_uri=avatar_uri)
-#     db.session.add(new_team)
-#     db.session.commit()
-
-#     return 'Ok!'
-
-
-# создает ивент
-# принимает на вход параметры t1
-# t2 и time
-# лефт и райт это имена команд, которые должны
-# быть предварительно созданы
-# метод POST
-# @app.route('/api/add_event', methods=['POST'])
-# @login_required
-# @admin_required
-# def add_event():
-#     t1_name = request.form.get('t1')
-#     t2_name = request.form.get('t2')
-#     time = request.form.get('time')
-
-#     t1 = Team.query.filter_by(name=t1_name).first()
-#     t2 = Team.query.filter_by(name=t2_name).first()
-
-#     if not t1:
-#         return 'Team one don\'t exists!'
-#     if not t2:
-#         return 'Team two don\'t exists!'
-#     try:
-#         time = datetime.datetime.strptime(time, TIME_FORMAT)
-#     except:
-#         return 'Time format exception!'
-
-#     new_event = Event(time=time,
-#                       team_1=t1.id,
-#                       team_2=t2.id)
-
-#     db.session.add(new_event)
-#     db.session.commit()
-
-#     return 'Ok!'
 
 
 # устанавливает деньги определенному юзеру

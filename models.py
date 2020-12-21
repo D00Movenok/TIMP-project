@@ -31,8 +31,8 @@ class Event(db.Model):
     amount1 = db.Column(db.Integer, nullable=False, default=0)
     amount2 = db.Column(db.Integer, nullable=False, default=0)
     time = db.Column(db.DateTime, nullable=False)
-    ended = db.Column(db.Boolean, nullable=False)
-    winner = db.Column(db.Boolean, nullable=False)
+    ended = db.Column(db.Boolean, nullable=False, default=False)
+    winner = db.Column(db.Boolean, nullable=True)
 
 
 class Team(db.Model):
