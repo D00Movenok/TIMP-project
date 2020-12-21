@@ -48,7 +48,7 @@ def update_database():
     now = datetime.now()
     done = Events.query.filter(ended == False and ended >= now).all()
     if done:
-        
+
         for thing in done:
             thing.ended = True
             thing.winner = bool(randint(0,1))
@@ -73,10 +73,7 @@ def update_database():
 # возвращает индекс, если надо чето добавить, дергай
 @app.route('/', methods=['GET'])
 def index():
-    if current_user.is_authenticated:
-        return render_template('index.html')
-    else:
-        return render_template('index.html')
+    return render_template('index.html')
 
 
 # логин
@@ -151,25 +148,70 @@ def admin_login():
     return render_template('admin.html')
 
 
-@app.route('/profile', methods=['GET', 'POST'])
+@app.route('/profile', methods=['GET'])
 @login_required
 def profile():
-    return render_template('profile.html')
+    return render_template('profile.html', amount = current_user.money)
 
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
 
-@app.route('/withdraw', methods=['GET'])
+
+# снимает денег с карты
+# кушает параметр amount
+# прибавляет деньги на карту юзверя
+# метод POST
+@app.route('/withdraw', methods=['GET', 'POST'])
 @login_required
 def withdraw():
-    return render_template('withdraw.html')
+    if request.method == 'GET':
+        return render_template('withdraw.html')
+    else:
+        try:
+            amount = int(request.form.get('amount'))
+
+            if amount < 1:
+                flash('Amount must be greater than 0')
+                return render_template('withdraw.html')
+
+            user = current_user
+            user.money = user.money - amount
+
+            db.session.commit()
+
+            return redirect(url_for('profile'))
+        except:
+            flash('Something get wrong')
+            return render_template('withdraw.html')
 
 
-@app.route('/deposit', methods=['GET'])
+# пополнение денег на карту
+# кушает параметр amount
+# прибавляет деньги на карту юзверя
+# метод POST
+@app.route('/deposit', methods=['GET', 'POST'])
 @login_required
 def deposit():
-    return render_template('deposit.html')
+    if request.method == 'GET':
+        return render_template('deposit.html')
+    else:
+        try:
+            amount = int(request.form.get('amount'))
+            if amount < 1:
+                flash('Amount must be greater than 0')
+                return render_template('deposit.html')
+
+            user = current_user
+            user.money = user.money + amount
+
+            db.session.commit()
+
+            return redirect(url_for('profile'))
+        except:
+            flash('Something get wrong')
+            return render_template('deposit.html')
+
 
 @app.route('/bets', methods=['GET'])
 # @login_required
@@ -335,26 +377,6 @@ def set_bet():
     user.money = user.money - amount
 
     db.session.add(new_bet)
-    db.session.commit()
-
-    return 'Ok!'
-
-
-# пополнение денег на карту
-# кушает параметр amount
-# прибавляет деньги на карту юзверя
-# метод POST
-@app.route('/api/enter_money', methods=['POST'])
-@login_required
-def enter_money():
-    amount = int(request.form.get('amount'))
-
-    if amount < 1:
-        return 'Fuck you!'
-
-    user = current_user
-    user.money = user.money + amount
-
     db.session.commit()
 
     return 'Ok!'

@@ -1,50 +1,49 @@
-<<<<<<< HEAD
 {% extends 'base.html' %}
 
 {% block title %}
-1337BET - Login page
+1337BET - Register page
 {% endblock %}
 
-    <h1>Register in 1337BET</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class=flashes>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-    {% block body %}
-        <div class="container" style="margin-left: 35%;	margin-top: 3%; margin-bottom: 1.45%;">
-            <div class="row">
-                <div>
-                    <div>
-                        <form method="POST" action="/register" role="form">
-                            <div class="form-group">
-                                <h2>Create account</h2>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" for="signupName">Your login</label>
-                                <input style="width: 50%;" id="signupName" type="text" maxlength="50" class="form-control" name="login">
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" for="signupPassword">Password</label>
-                                <input style="width: 50%;" id="signupPassword" type="password" maxlength="25" class="form-control" placeholder="at least 6 characters" length="40" name="password">
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" for="signupPasswordagain">Password again</label>
-                                <input style="width: 50%;" id="signupPasswordagain" type="password" maxlength="25" class="form-control" name="password2">
-                            </div>
-                            <div class="form-group">
-                                <button style="width: 50%; background: #0795fa;" id="signupSubmit" type="submit" class="btn btn-info btn-block">Create your account</button>
-                            </div>
-                            <p class="form-group">By creating an account, you agree to our <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.</p>
-                            <hr>
-                            <p></p>Already have an account? <a href="/login">Sign in</a></p>
-                        </form>
+<h1>Register in 1337BET</h1>
+{% block body %}
+<div class="container" style="margin-left: 35%;	margin-top: 3%; margin-bottom: 1.45%;">
+    <div class="row">
+        <div>
+            <div>
+                <form method="POST" action="/register" role="form">
+                    <div class="form-group">
+                        <h2>Create account</h2>
                     </div>
-                </div>
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="alert alert-danger">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                    <div class="form-group">
+                        <label class="control-label" for="signupName">Your login</label>
+                        <input style="width: 50%;" id="signupName" type="text" maxlength="50" class="form-control" name="login">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="signupPassword">Password</label>
+                        <input style="width: 50%;" id="signupPassword" type="password" maxlength="25" class="form-control" placeholder="at least 6 characters" length="40" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="signupPasswordagain">Password again</label>
+                        <input style="width: 50%;" id="signupPasswordagain" type="password" maxlength="25" class="form-control" name="password2">
+                    </div>
+                    <div class="form-group">
+                        <button style="width: 50%; background: #0795fa;" id="signupSubmit" type="submit" class="btn btn-info btn-block">Create your account</button>
+                    </div>
+                    <p class="form-group">By creating an account, you agree to our <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.</p>
+                    <hr>
+                    <p></p>Already have an account? <a href="/login">Sign in</a></p>
+                </form>
             </div>
         </div>
-        {% endblock %}
+    </div>
+</div>
+{% endblock %}

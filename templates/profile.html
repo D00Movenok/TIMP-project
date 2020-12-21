@@ -35,10 +35,13 @@ Profile 1337BET
     <p class="data">{% block email %}john_smith@1337.com{% endblock %}</p>
     <hr class="profile-hr">
     <h2>Mobile</h2>
-  <p class="data">{% block mobile %}888-888-88-88{% endblock %}</p>
+    <p class="data">{% block mobile %}888-888-88-88{% endblock %}</p>
     <hr class="profile-hr">
     <h2>Address</h2>
     {% block address %}SPB, LOMONOSOVA 9{% endblock %}
+    <hr class="profile-hr">
+    <h2>Money amount</h2>
+    {% block money %}{{amount}}{% endblock %}
   </div>
   </div>
 
