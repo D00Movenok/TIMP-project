@@ -193,7 +193,7 @@ def admin():
                 flash('User ' + login + ' added to admins')
             else:
                 flash('User ' + login + ' not found!')
-        else:
+        elif id == 4:
             # создает команду
             # на вход принимает параметр name и файл
             # файл опциональный, в случае его отсутствия
@@ -220,10 +220,33 @@ def admin():
                 db.session.commit()
 
                 flash('Team ' + name + ' has created!')
+        else:
+            # устанавливает деньги определенному юзеру
+            # кушает параметр login и amount
+            # принимается только от админа
+            # метод POST
+            login = request.form.get('login')
+            amount = request.form.get('amount')
+
+            user = User.query.filter_by(login=login).first()
+
+            if not user:
+                return 'Wrong username!'
+            else:
+                try:
+                    user.money = int(amount)
+                    db.session.commit()
+                    flash('Setted ' + amount + ' money to ' + login)
+                except:
+                    flash('Bad amount!')
 
     teams = Team.query.with_entities(Team.name).all()
-    users = User.query.with_entities(User.login).filter_by(is_admin=False).all()
-    return render_template('admin.html', team_list = teams, user_list = users)
+    not_admins = User.query.with_entities(User.login).filter_by(is_admin=False).all()
+    users = User.query.with_entities(User.login).all()
+    return render_template('admin.html',
+                           team_list = teams,
+                           user_list = users,
+                           not_admins = not_admins)
 
 
 @app.route('/profile', methods=['GET'])
@@ -295,32 +318,11 @@ def deposit():
 @app.route('/bets', methods=['GET'])
 # @login_required
 def bets():
-    return render_template('bets.html', table_list = [1,2,3,4,5], my_string = 'Championship', team_list=[1,2,3,4,5], coef_list = [2.5,4.2])
-
-
-# устанавливает деньги определенному юзеру
-# кушает параметр login и amount
-# принимается только от админа
-# метод POST
-@app.route('/api/set_money', methods=['POST'])
-@login_required
-@admin_required
-def set_money():
-    login = request.form.get('login')
-    amount = request.form.get('amount')
-
-    user = User.query.filter_by(login=login).first()
-
-    if not user:
-        return 'Wrong username!'
-
-    try:
-        user.money = int(amount)
-    except:
-        return 'Bad amount!'
-    db.session.commit()
-
-    return 'Ok!'
+    return render_template('bets.html',
+                           table_list = [1,2,3,4,5],
+                           my_string = 'Championship',
+                           team_list=[1,2,3,4,5],
+                           coef_list = [2.5,4.2])
 
 
 # устанавливает деньги определенному юзеру
