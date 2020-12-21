@@ -23,6 +23,7 @@
         {% if current_user.is_authenticated %}
             <li id="list" style="float:right"><a href="{{ url_for('logout') }}">Logout</a></li>
             <li id="list" style="float:right"><a id="nv" class="active" href="{{ url_for('profile') }}">Profile</a></li>
+            <li id="list" style="float:right"><a id="nv" class="active">Deposit: 100$</a></li>
         {% else %}
             <li id="list" style="float:right"><a href="{{ url_for('register') }}">Register</a></li>
             <li id="list" style="float:right"><a id="nv" class="active" href="{{ url_for('login') }}">Login</a></li>
