@@ -116,7 +116,7 @@ def register():
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 @admin_required
-def admin_login():
+def admin():
     if request.method == 'POST':
         id = int(request.form.get('id'))
         if not id:
