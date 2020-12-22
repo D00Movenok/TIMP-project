@@ -3,6 +3,7 @@ import os
 from functools import wraps
 from hashlib import sha256
 from random import randint
+from math import floor
 
 from flask import (flash, redirect, render_template, request,
                    send_from_directory, url_for)
@@ -203,6 +204,7 @@ def admin():
             if Team.query.filter_by(name=name).first():
                 flash('Teamname is busy!')
             else:
+                print(request.files)
                 if 'file' not in request.files:
                     avatar_uri = DEFAULT_AVATAR
                 else:
@@ -315,14 +317,62 @@ def deposit():
             return render_template('deposit.html')
 
 
-@app.route('/bets', methods=['GET'])
-# @login_required
+@app.route('/bets', methods=['GET', 'POST'])
+@login_required
 def bets():
+    if request.method == 'POST':
+        event_id = int(request.form.get('event_id'))
+        amount = int(request.form.get('amount'))
+        team_1 = bool(int(request.form.get('team_1')))
+
+        user = current_user
+        event = Event.query.filter_by(id=event_id).first()
+
+        if not event:
+            flash('Bad event id!')
+        elif amount < 1:
+            flash('Go away, hacker')
+        elif amount > user.money:
+            flash('Not enough money :(')
+        elif event.ended == true:
+            flash('Go away, cheater')
+        else:
+            single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
+                                    .filter(Bet.event_id == event_id).first()
+            if single_bet_test:
+                flash('You already have a bet!')
+            else:
+                new_bet = Bet(amount=amount,
+                            team_1=team_1,
+                            user_id=user.id,
+                            event_id=event.id)
+                if team_1:
+                    event.amount1 = event.amount1 + amount
+                else:
+                    event.amount2 = event.amount2 + amount
+
+                user.money = user.money - amount
+
+                db.session.add(new_bet)
+                db.session.commit()
+
+                flash('Bet is successfully created')
+
+
+    events = Event.query.all()
+    event_list = []
+    for event in events:
+        t1 = Team.query.filter_by(id=event.team_1).one()
+        t2 = Team.query.filter_by(id=event.team_2).one()
+        if event.amount1 and event.amount2:
+            coef1 = floor(event.amount2 / event.amount1) + 1
+            coef2 = floor(event.amount1 / event.amount2) + 1
+        else:
+            coef1 = 2
+            coef2 = 2
+        event_list.append([coef1, t1.avatar_uri, t1.name, t2.name, t2.avatar_uri, coef2, event.id])
     return render_template('bets.html',
-                           table_list = [1,2,3,4,5],
-                           my_string = 'Championship',
-                           team_list=[1,2,3,4,5],
-                           coef_list = [2.5,4.2])
+                           event_list=event_list)
 
 
 # устанавливает деньги определенному юзеру
@@ -332,50 +382,50 @@ def bets():
 # team_1 булевая переменная, ставим ли
 # мы на первую команду
 # метод POST
-@app.route('/api/set_bet', methods=['POST'])
-@login_required
-def set_bet():
-    event_id = int(request.form.get('event_id'))
-    amount = int(request.form.get('amount'))
-    team_1 = request.form.get('team_1')
+# @app.route('/api/set_bet', methods=['POST'])
+# @login_required
+# def set_bet():
+#     event_id = int(request.form.get('event_id'))
+#     amount = int(request.form.get('amount'))
+#     team_1 = request.form.get('team_1')
 
-    user = current_user
-    event = Event.query.filter_by(id=event_id).first()
+#     user = current_user
+#     event = Event.query.filter_by(id=event_id).first()
 
-    if team_1:
-        team_1 = True
-    else:
-        team_1 = False
+#     if team_1:
+#         team_1 = True
+#     else:
+#         team_1 = False
 
-    if not event:
-        return 'Bad event id!'
-    if amount < 1:
-        return 'Fuck you'
-    if amount > user.money:
-        return 'Not enough money :('
-    if event.ended == true:
-        return 'Go away, cheater'
+#     if not event:
+#         return 'Bad event id!'
+#     if amount < 1:
+#         return 'Fuck you'
+#     if amount > user.money:
+#         return 'Not enough money :('
+#     if event.ended == true:
+#         return 'Go away, cheater'
 
-    single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
-                               .filter(Bet.event_id == event_id).first()
-    if single_bet_test:
-        return 'You already have a bet!'
+#     single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
+#                                .filter(Bet.event_id == event_id).first()
+#     if single_bet_test:
+#         return 'You already have a bet!'
 
-    new_bet = Bet(amount=amount,
-                  team_1=team_1,
-                  user_id=user.id,
-                  event_id=event.id)
-    if team_1:
-        event.amount1 = event.amount1 + amount
-    else:
-        event.amount2 = event.amount2 + amount
+#     new_bet = Bet(amount=amount,
+#                   team_1=team_1,
+#                   user_id=user.id,
+#                   event_id=event.id)
+#     if team_1:
+#         event.amount1 = event.amount1 + amount
+#     else:
+#         event.amount2 = event.amount2 + amount
 
-    user.money = user.money - amount
+#     user.money = user.money - amount
 
-    db.session.add(new_bet)
-    db.session.commit()
+#     db.session.add(new_bet)
+#     db.session.commit()
 
-    return 'Ok!'
+#     return 'Ok!'
 
 
 @app.route('/favicon.ico')
