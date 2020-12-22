@@ -22,14 +22,18 @@ Bets 1337BET
             <tr>
                 <td style="width:fit-content">
                     <form method="POST" action="#" role="form" style="display: inline;">
-                        <div id="betln">Bet coeff: {{coef_list[0]}}  
-                            <input type="radio" name="rad" style="display: inline;" value="bet">
+                        <div id="betln">
+                            <label >
+                            <input type="radio" name="rad" id="radleft" style="display: inline;" value="bet"/>
+                            Bet coeff: {{coef_list[0]}}  </label>
                         </div>
                     <img style="display: inline; width: 10%; height: auto;" src="../static/images/blog-element-1-94x94.jpg">
                     <div style="display: inline;"> Team {{n}} VS Team {{n+1}} </div>
                     <img style="display: inline; width: 10%; height: auto;" src="../static/images/blog-element-2-94x94.jpg">
-                        <div id="betln">Bet coeff: {{coef_list[1]}} 
-                            <input type="radio" name="rad" style="display: inline;" value="bet">
+                        <div id="betln">
+                            <label >
+                            <input type="radio" name="rad" id="radright" style="display: inline;" value="bet"/>
+                            Bet coeff: {{coef_list[1]}} </label>
                         </div>
                     </form>
                 </td>
