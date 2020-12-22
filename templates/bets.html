@@ -41,7 +41,7 @@ Bets 31337BET
                                     {% else %}
                                         <input type="radio" name="team_1" id="radleft" style="display: inline;" value="1" required/>
                                     {% endif %}
-                                Bet coeff: {{n[0]}}  </label>
+                                Bet coeff: {{'%0.2f' % n[0]}}  </label>
                             </div>
                         <img style="display: inline; width: 10%; height: auto; margin-left: 3px;" src="/static/avatars/{{n[1]}}">
                         <div style="display: inline;"> {{n[2]}} <font size="12px">VS</font> {{n[3]}} </div>
@@ -57,7 +57,7 @@ Bets 31337BET
                                 {% else %}
                                     <input type="radio" name="team_1" id="radleft" style="display: inline;" value="0" required/>
                                 {% endif %}
-                                Bet coeff: {{n[5]}} </label>
+                                Bet coeff: {{'%0.2f' % n[5]}} </label>
                             </div>
                     </td>
                     <td style = "text-align: right; width:10%;">

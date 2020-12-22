@@ -2,17 +2,17 @@ import datetime
 import os
 from functools import wraps
 from hashlib import sha256
-from random import randint
 from math import floor
+from random import randint
 
 from flask import (flash, redirect, render_template, request,
                    send_from_directory, url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
+from models import Bet, Event, Team, User
 from settings import (ALLOWED_EXTENSIONS, DEFAULT_AVATAR, TIME_FORMAT, app, db,
                       salt)
-from models import Event, Team, User, Bet
 
 
 def admin_required(response):
@@ -136,11 +136,11 @@ def admin():
                         bets = thing.bets
                         if len(bets) > 1:
                             if thing.winner == False:
-                                coef = floor(thing.amount2 / thing.amount1) + 1
+                                coef = round(thing.amount2 / thing.amount1, 2) + 1
                                 bets = Bet.query.filter_by(id=thing.bets).filter_by(team_1=True).all()
                                 bet_iter(bets, coef)
                             else:
-                                coef = floor(thing.amount1 / thing.amount2) + 1
+                                coef = round(thing.amount1 / thing.amount2, 2) + 1
                                 bets = Bet.query.filter_by(id=thing.bets).filter_by(team_1=False).all()
                                 bet_iter(bets, coef)
                         else:
@@ -378,8 +378,8 @@ def bets():
         t1 = Team.query.filter_by(id=event.team_1).one()
         t2 = Team.query.filter_by(id=event.team_2).one()
         if event.amount1 and event.amount2:
-            coef1 = floor(event.amount2 / event.amount1) + 1
-            coef2 = floor(event.amount1 / event.amount2) + 1
+            coef1 = round(event.amount2 / event.amount1, 2) + 1
+            coef2 = round(event.amount1 / event.amount2, 2) + 1
         else:
             coef1 = 2
             coef2 = 2
