@@ -17,10 +17,10 @@ Bets 1337BET
                 <th style="width: 70%; background: rgb(161, 161, 161);"></th>
             </tr>
         </thead>
-        <tbody style="background: rgb(255, 255, 255);">
+        <tbody style="background: rgb(255, 255, 255); color:#000000;">
             {% for n in team_list %}
             <tr>
-                <td>Team {{n}} VS Team {{n}}</td>
+                <td><img style="display: inline; width: 10%; height: auto;" src="../static/images/blog-element-1-94x94.jpg"><div style="display: inline;"> Team {{n}} VS Team {{n+1}} </div><img style="display: inline; width: 10%; height: auto;" src="../static/images/blog-element-2-94x94.jpg"></td>
                 <td style = "text-align: right;">
                     <input style="width:25%;" type="number" value=1>
                     {% for n in coef_list %}
