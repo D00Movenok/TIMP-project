@@ -24,7 +24,11 @@ Bets 1337BET
                 <td style = "text-align: right;">
                     <input style="width:25%;" type="number" value=1>
                     {% for n in coef_list %}
-                    <a id="betln" href="#openModal">Bet coeff: {{n}}</a>
+                    <form method="POST" action="#" role="form">
+                        <div id="betln">Bet coeff: {{n}}
+                            <input type="button" value="bet">
+                        </div>
+                    </form>
                     {% endfor %}
                 </td>
             </tr>
