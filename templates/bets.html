@@ -27,12 +27,20 @@ Bets 1337BET
         </thead>
         <tbody style="background: rgb(255, 255, 255); color:#000000;">
             {% for n in event_list %}
-            <form method="POST" action="#" role="form" style="display: inline;"></form>
+            <form method="POST" action="#" role="form" style="display: inline;">
                 <tr>
                     <td style="width:fit-content">
                             <div id="betln">
                                 <label >
-                                <input type="radio" name="team_1" id="radleft" style="display: inline;" value="1" required/>
+                                    {% if n[7] %}
+                                        {% if n[9] %}
+                                            <input type="radio" name="team_1" id="radleft" style="display: inline;" value="1" checked disabled required/>
+                                        {% else %}
+                                            <input type="radio" name="team_1" id="radleft" style="display: inline;" value="1" disabled required/>
+                                        {% endif %}
+                                    {% else %}
+                                        <input type="radio" name="team_1" id="radleft" style="display: inline;" value="1" required/>
+                                    {% endif %}
                                 Bet coeff: {{n[0]}}  </label>
                             </div>
                         <img style="display: inline; width: 10%; height: auto; margin-left: 3px;" src="/static/avatars/{{n[1]}}">
@@ -40,14 +48,27 @@ Bets 1337BET
                         <img style="display: inline; width: 10%; height: auto; margin-left: 3px;" src="/static/avatars/{{n[4]}}">
                             <div id="betln">
                                 <label >
-                                <input type="radio" name="team_1" id="radright" style="display: inline;" value="0" required/>
+                                {% if n[7] %}
+                                    {% if n[9] %}
+                                        <input type="radio" name="team_1" id="radleft" style="display: inline;" value="0" disabled required/>
+                                    {% else %}
+                                        <input type="radio" name="team_1" id="radleft" style="display: inline;" value="0" checked disabled required/>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="radio" name="team_1" id="radleft" style="display: inline;" value="0" required/>
+                                {% endif %}
                                 Bet coeff: {{n[5]}} </label>
                             </div>
                     </td>
                     <td style = "text-align: right; width:10%;">
                         <input type="number" name="event_id" value="{{n[6]}}" hidden>
-                        <input style="width:20%;" type="number" value=1 required>
-                        <button type="submit">Bet!</button>
+                        {% if n[7] %}
+                            <input style="width:20%;" name="amount" type="number" value={{n[8]}} disabled required>
+                            <button type="submit" disabled>Bet</button>
+                        {% else %}
+                            <input style="width:20%;" name="amount" type="number" value={{n[8]}} required>
+                            <button type="submit">Bet</button>
+                        {% endif %}
                     </td>
                 </tr>
             </form>

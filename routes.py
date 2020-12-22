@@ -39,7 +39,7 @@ def allowed_file(filename):
 def bet_iter(bets, coef):
     for bet in bets:
         bet.ended = True
-        user = User.filter_by(id=bet.user_id).first()
+        user = User.query.filter_by(id=bet.user_id).first()
         user.money = user.money + bet.amount * coef
 
 
@@ -126,13 +126,14 @@ def admin():
             # проверяет ивенты на их прошедшесть
             # выставляет победителя (рандомно) и раздает деньги
             now = datetime.datetime.now()
-            done = Event.query.filter(Event.ended == False and Event.time >= now).all()
+            done = Event.query.filter(Event.ended == False)\
+                              .filter(Event.time <= now).all()
             if done:
                 for thing in done:
                     thing.ended = True
                     thing.winner = bool(randint(0,1))
                     if thing.bets:
-                        bets = Bet.query.filter_by(id=thing.bets).all()
+                        bets = thing.bets
                         if len(bets) > 1:
                             if thing.winner == False:
                                 coef = floor(thing.amount2 / thing.amount1) + 1
@@ -334,7 +335,7 @@ def bets():
             flash('Go away, hacker')
         elif amount > user.money:
             flash('Not enough money :(')
-        elif event.ended == true:
+        elif event.ended == True or event.time <= datetime.datetime.now():
             flash('Go away, cheater')
         else:
             single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
@@ -359,9 +360,21 @@ def bets():
                 flash('Bet is successfully created')
 
 
-    events = Event.query.all()
+    events = Event.query.order_by(Event.id.desc()).all()
     event_list = []
     for event in events:
+        if event.time <= datetime.datetime.now():
+            is_betted = True
+        else:
+            is_betted = False
+        amount = 0
+        team_1 = False
+        bet = Bet.query.filter(Bet.user_id == current_user.id)\
+                       .filter(Bet.event_id == event.id).first()
+        if bet:
+            is_betted = True
+            amount = bet.amount
+            team_1 = bet.team_1
         t1 = Team.query.filter_by(id=event.team_1).one()
         t2 = Team.query.filter_by(id=event.team_2).one()
         if event.amount1 and event.amount2:
@@ -370,7 +383,8 @@ def bets():
         else:
             coef1 = 2
             coef2 = 2
-        event_list.append([coef1, t1.avatar_uri, t1.name, t2.name, t2.avatar_uri, coef2, event.id])
+        event_list.append([coef1, t1.avatar_uri, t1.name, t2.name, t2.avatar_uri, coef2, event.id, is_betted, amount, team_1])
+    print(event_list)
     return render_template('bets.html',
                            event_list=event_list)
 
