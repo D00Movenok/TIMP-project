@@ -22,11 +22,89 @@
 							<h2>Admin control panel</h2>
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="adminKey">Key</label>
-							<input id="adminKey" type="password" maxlength="25" class="form-control" placeholder="" length="40">
+							<button id="adminSubmit" type="submit" class="btn btn-info btn-block">Event check in</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div class="container">
+		<div class="row">
+			<div class="panel panel-primary">
+				<div class="panel-body">
+					<form method="POST" action="#" role="form">
+						<div class="form-group">
+							<h3>Add event</h3>
 						</div>
 						<div class="form-group">
-							<button id="adminSubmit" type="submit" class="btn btn-info btn-block">Sign in</button>
+							<label class="control-label" for="eventid">{% block eventid %}Event id{% endblock %}</label>
+							<input id="eventid" maxlength="25" class="form-control" placeholder="" length="40">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="eventid">{% block team1 %}team1{% endblock %}</label>
+							<input id="eventteam1" maxlength="25" class="form-control" placeholder="" length="40">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="eventid">{% block team2 %}team2{% endblock %}</label>
+							<input id="eventteam2" maxlength="25" class="form-control" placeholder="" length="40">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="eventid">{% block time %}time{% endblock %}</label>
+							<input id="eventtime" maxlength="25" class="form-control" placeholder="" length="40">
+						</div>
+						<div class="form-group">
+							<button id="eventSubmit" type="submit" class="btn btn-info btn-block">Add event</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div class="container">
+		<div class="row">
+			<div class="panel panel-primary">
+				<div class="panel-body">
+					<form method="POST" action="#" role="form">
+						<div class="form-group">
+							<h3>User-to-admin control</h3>
+						</div>
+						{% for user_name in user_list %}
+								<input type="checkbox" name="option" value="un">{{user_name}}<Br>
+						{% endfor %}
+						<div class="form-group">
+							<button id="makeAmdSubmit" type="submit" class="btn btn-info btn-block">Make admin</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div class="container">
+		<div class="row">
+			<div class="panel panel-primary">
+				<div class="panel-body">
+					<form method="POST" action="#" role="form">
+						<div class="form-group">
+							<h3>Add team</h3>
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="eventid">{% block teamid %}Team id{% endblock %}</label>
+							<input id="teamid" maxlength="25" class="form-control" placeholder="" length="40">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="eventid">{% block teamname %}Team name{% endblock %}</label>
+							<input id="teamname" maxlength="25" class="form-control" placeholder="" length="40">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="eventid">{% block teamavatar %}Avatar url{% endblock %}</label>
+							<input id="teamavatar" maxlength="25" class="form-control" placeholder="" length="40">
+						</div>
+						<div class="form-group">
+							<button id="teamSubmit" type="submit" class="btn btn-info btn-block">Add team</button>
 						</div>
 					</form>
 				</div>
