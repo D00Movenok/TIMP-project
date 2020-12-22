@@ -22,8 +22,11 @@
         <li id="list"><a href="{{ url_for('about') }}">About</a></li>
         {% if current_user.is_authenticated %}
             <li id="list" style="float:right"><a href="{{ url_for('logout') }}">Logout</a></li>
-            <li id="list" style="float:right"><a id="nv" class="active" href="{{ url_for('profile') }}">Profile</a></li>
-            <li id="list" style="float:right"><a id="nv" class="active">Deposit: 100$</a></li>
+            <li id="list" style="float:right"><a href="{{ url_for('profile') }}">Profile</a></li>
+            {% if current_user.is_admin %}
+                <li id="list" style="float:right"><a href="{{ url_for('admin') }}">Admin</a></li>
+            {% endif %}
+            <li id="list" style="float:right"><a id="nv" class="active">Deposit: {{ current_user.money }}$</a></li>
         {% else %}
             <li id="list" style="float:right"><a href="{{ url_for('register') }}">Register</a></li>
             <li id="list" style="float:right"><a id="nv" class="active" href="{{ url_for('login') }}">Login</a></li>
