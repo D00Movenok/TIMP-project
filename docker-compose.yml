@@ -1,0 +1,12 @@
+version: '3'
+services:
+  bets-server:
+    build: .
+    image: "bets_server"
+    entrypoint: /usr/bin/python3 /app/start.py
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./app:/app
+    ports:
+      - "127.0.0.1:10005:5000"

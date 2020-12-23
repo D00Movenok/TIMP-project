@@ -3,8 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from hashlib import sha256
 
-
+# соль
 salt = 'Qwerty1337'
+# пароль администратора
 admin_password = 'admin'
 
 app = Flask(__name__, static_folder='static')
