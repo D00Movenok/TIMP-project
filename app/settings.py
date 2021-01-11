@@ -10,7 +10,7 @@ admin_password = 'admin'
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = salt
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:postgres@bets-db:5432'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
