@@ -318,6 +318,14 @@ def deposit():
             return render_template('deposit.html')
 
 
+# устанавливает деньги определенному юзеру
+# кушает параметр event_id, amount и team_1
+# event_id айди евента для ставки
+# amount число ставки
+# team_1 булевая переменная, ставим ли
+# мы на первую команду
+# метод POST
+# на GET возвращает страничку
 @app.route('/bets', methods=['GET', 'POST'])
 @login_required
 def bets():
@@ -387,59 +395,6 @@ def bets():
     print(event_list)
     return render_template('bets.html',
                            event_list=event_list)
-
-
-# устанавливает деньги определенному юзеру
-# кушает параметр event_id, amount и team_1
-# event_id айди евента для ставки
-# amount число ставки
-# team_1 булевая переменная, ставим ли
-# мы на первую команду
-# метод POST
-# @app.route('/api/set_bet', methods=['POST'])
-# @login_required
-# def set_bet():
-#     event_id = int(request.form.get('event_id'))
-#     amount = int(request.form.get('amount'))
-#     team_1 = request.form.get('team_1')
-
-#     user = current_user
-#     event = Event.query.filter_by(id=event_id).first()
-
-#     if team_1:
-#         team_1 = True
-#     else:
-#         team_1 = False
-
-#     if not event:
-#         return 'Bad event id!'
-#     if amount < 1:
-#         return 'Fuck you'
-#     if amount > user.money:
-#         return 'Not enough money :('
-#     if event.ended == true:
-#         return 'Go away, cheater'
-
-#     single_bet_test = Bet.query.filter(Bet.user_id == user.id)\
-#                                .filter(Bet.event_id == event_id).first()
-#     if single_bet_test:
-#         return 'You already have a bet!'
-
-#     new_bet = Bet(amount=amount,
-#                   team_1=team_1,
-#                   user_id=user.id,
-#                   event_id=event.id)
-#     if team_1:
-#         event.amount1 = event.amount1 + amount
-#     else:
-#         event.amount2 = event.amount2 + amount
-
-#     user.money = user.money - amount
-
-#     db.session.add(new_bet)
-#     db.session.commit()
-
-#     return 'Ok!'
 
 
 @app.route('/favicon.ico')
